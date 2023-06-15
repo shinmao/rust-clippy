@@ -1,0 +1,27 @@
+error: function name `foo`
+  --> $DIR/foo_functions.rs:8:5
+   |
+LL |     pub fn foo(&self) {}
+   |     ^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: You should use more meaningful name
+   = note: `-D clippy::foo-functions` implied by `-D warnings`
+
+error: function name `foo`
+  --> $DIR/foo_functions.rs:15:5
+   |
+LL |     fn foo(&self) {}
+   |     ^^^^^^^^^^^^^^^^
+   |
+   = help: You should use more meaningful name
+
+error: function name `foo`
+  --> $DIR/foo_functions.rs:21:1
+   |
+LL | fn foo() {}
+   | ^^^^^^^^^^^
+   |
+   = help: You should use more meaningful name
+
+error: aborting due to 3 previous errors
+

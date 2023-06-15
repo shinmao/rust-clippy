@@ -1,3 +1,4 @@
+mod foo_functions;
 mod impl_trait_in_params;
 mod misnamed_getters;
 mod must_use;
@@ -359,6 +360,25 @@ declare_clippy_lint! {
     "`impl Trait` is used in the function's parameters"
 }
 
+declare_clippy_lint! {
+    /// ### What it does
+    ///
+    /// ### Why is this bad?
+    ///
+    /// ### Example
+    /// ```rust
+    /// // example code where clippy issues a warning
+    /// ```
+    /// Use instead:
+    /// ```rust
+    /// // example code which does not raise clippy warning
+    /// ```
+    #[clippy::version = "1.67.0"]
+    pub FOO_FUNCTIONS,
+    pedantic,
+    "default lint description"
+}
+
 #[derive(Copy, Clone)]
 pub struct Functions {
     too_many_arguments_threshold: u64,
@@ -387,6 +407,7 @@ impl_lint_pass!(Functions => [
     RESULT_LARGE_ERR,
     MISNAMED_GETTERS,
     IMPL_TRAIT_IN_PARAMS,
+    FOO_FUNCTIONS,
 ]);
 
 impl<'tcx> LateLintPass<'tcx> for Functions {
@@ -405,6 +426,7 @@ impl<'tcx> LateLintPass<'tcx> for Functions {
         not_unsafe_ptr_arg_deref::check_fn(cx, kind, decl, body, def_id);
         misnamed_getters::check_fn(cx, kind, decl, body, span);
         impl_trait_in_params::check_fn(cx, &kind, body, hir_id);
+        foo_functions::check_fn(cx, kind, decl, body, span);
     }
 
     fn check_item(&mut self, cx: &LateContext<'tcx>, item: &'tcx hir::Item<'_>) {
