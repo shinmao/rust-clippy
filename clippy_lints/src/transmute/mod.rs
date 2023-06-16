@@ -9,6 +9,7 @@ mod transmute_num_to_bytes;
 mod transmute_ptr_to_ptr;
 mod transmute_ptr_to_ref;
 mod transmute_ref_to_ref;
+mod transmute_statistics;
 mod transmute_undefined_repr;
 mod transmutes_expressible_as_ptr_casts;
 mod transmuting_null;
@@ -464,6 +465,25 @@ declare_clippy_lint! {
     "transmute results in a null function pointer, which is undefined behavior"
 }
 
+declare_clippy_lint! {
+    /// ### What it does
+    ///
+    /// ### Why is this bad?
+    ///
+    /// ### Example
+    /// ```rust
+    /// // example code where clippy issues a warning
+    /// ```
+    /// Use instead:
+    /// ```rust
+    /// // example code which does not raise clippy warning
+    /// ```
+    #[clippy::version = "1.72.0"]
+    pub TRANSMUTE_STATISTICS,
+    complexity,
+    "To summarize the use of transmute"
+}
+
 pub struct Transmute {
     msrv: Msrv,
 }
@@ -485,6 +505,7 @@ impl_lint_pass!(Transmute => [
     TRANSMUTE_UNDEFINED_REPR,
     TRANSMUTING_NULL,
     TRANSMUTE_NULL_TO_FN,
+    TRANSMUTE_STATISTICS,
 ]);
 impl Transmute {
     #[must_use]
@@ -514,31 +535,34 @@ impl<'tcx> LateLintPass<'tcx> for Transmute {
                 let to_ty = cx.typeck_results().expr_ty(e);
 
                 // If useless_transmute is triggered, the other lints can be skipped.
-                if useless_transmute::check(cx, e, from_ty, to_ty, arg) {
-                    return;
-                }
+                //if useless_transmute::check(cx, e, from_ty, to_ty, arg) {
+                //    return;
+                //}
 
-                let linted = wrong_transmute::check(cx, e, from_ty, to_ty)
-                    | crosspointer_transmute::check(cx, e, from_ty, to_ty)
-                    | transmuting_null::check(cx, e, arg, to_ty)
-                    | transmute_null_to_fn::check(cx, e, arg, to_ty)
-                    | transmute_ptr_to_ref::check(cx, e, from_ty, to_ty, arg, path, &self.msrv)
-                    | transmute_int_to_char::check(cx, e, from_ty, to_ty, arg, const_context)
-                    | transmute_ref_to_ref::check(cx, e, from_ty, to_ty, arg, const_context)
-                    | transmute_ptr_to_ptr::check(cx, e, from_ty, to_ty, arg)
-                    | transmute_int_to_bool::check(cx, e, from_ty, to_ty, arg)
-                    | transmute_int_to_float::check(cx, e, from_ty, to_ty, arg, const_context)
-                    | transmute_int_to_non_zero::check(cx, e, from_ty, to_ty, arg)
-                    | transmute_float_to_int::check(cx, e, from_ty, to_ty, arg, const_context)
-                    | transmute_num_to_bytes::check(cx, e, from_ty, to_ty, arg, const_context)
-                    | (
-                        unsound_collection_transmute::check(cx, e, from_ty, to_ty)
-                        || transmute_undefined_repr::check(cx, e, from_ty, to_ty)
-                    );
+                //let linted = wrong_transmute::check(cx, e, from_ty, to_ty)
+                //    | crosspointer_transmute::check(cx, e, from_ty, to_ty)
+                //    | transmuting_null::check(cx, e, arg, to_ty)
+                //    | transmute_null_to_fn::check(cx, e, arg, to_ty)
+                //    | transmute_ptr_to_ref::check(cx, e, from_ty, to_ty, arg, path, &self.msrv)
+                //    | transmute_int_to_char::check(cx, e, from_ty, to_ty, arg, const_context)
+                //    | transmute_ref_to_ref::check(cx, e, from_ty, to_ty, arg, const_context)
+                //    | transmute_ptr_to_ptr::check(cx, e, from_ty, to_ty, arg)
+                //    | transmute_int_to_bool::check(cx, e, from_ty, to_ty, arg)
+                //    | transmute_int_to_float::check(cx, e, from_ty, to_ty, arg, const_context)
+                //    | transmute_int_to_non_zero::check(cx, e, from_ty, to_ty, arg)
+                //    | transmute_float_to_int::check(cx, e, from_ty, to_ty, arg, const_context)
+                //    | transmute_num_to_bytes::check(cx, e, from_ty, to_ty, arg, const_context)
+                //    | transmute_statistics::check(cx, e, from_ty, to_ty, arg)
+                //    | (
+                //        unsound_collection_transmute::check(cx, e, from_ty, to_ty)
+                //        || transmute_undefined_repr::check(cx, e, from_ty, to_ty)
+                //    );
 
-                if !linted {
-                    transmutes_expressible_as_ptr_casts::check(cx, e, from_ty, from_ty_adjusted, to_ty, arg);
-                }
+                //if !linted {
+                //    transmutes_expressible_as_ptr_casts::check(cx, e, from_ty, from_ty_adjusted, to_ty, arg);
+                //}
+
+                transmute_statistics::check(cx, e, from_ty, to_ty, arg);
             }
         }
     }

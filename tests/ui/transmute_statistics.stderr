@@ -1,0 +1,61 @@
+error: type `struct_a` should have an upper camel case name
+  --> $DIR/transmute_statistics.rs:4:12
+   |
+LL | pub struct struct_a {
+   |            ^^^^^^^^ help: convert the identifier to upper camel case: `StructA`
+   |
+   = note: `-D non-camel-case-types` implied by `-D warnings`
+
+error: type `struct_b` should have an upper camel case name
+  --> $DIR/transmute_statistics.rs:10:12
+   |
+LL | pub struct struct_b {
+   |            ^^^^^^^^ help: convert the identifier to upper camel case: `StructB`
+
+error[E0308]: mismatched types
+  --> $DIR/transmute_statistics.rs:17:33
+   |
+LL | pub unsafe fn transmute_test<T>(ptr: u64) -> T {
+   |                              - this type parameter
+LL |     std::mem::transmute::<T, T>(ptr as usize);
+   |     --------------------------- ^^^^^^^^^^^^ expected type parameter `T`, found `usize`
+   |     |
+   |     arguments to this function are incorrect
+   |
+   = note: expected type parameter `T`
+                        found type `usize`
+note: function defined here
+  --> /home/rafael/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/intrinsics.rs:1377:12
+   |
+LL |     pub fn transmute<Src, Dst>(src: Src) -> Dst;
+   |            ^^^^^^^^^
+
+error[E0308]: mismatched types
+  --> $DIR/transmute_statistics.rs:16:46
+   |
+LL | pub unsafe fn transmute_test<T>(ptr: u64) -> T {
+   |               -------------- -               ^ expected type parameter `T`, found `()`
+   |               |              |
+   |               |              this type parameter
+   |               implicitly returns `()` as its body has no tail or `return` expression
+LL |     std::mem::transmute::<T, T>(ptr as usize);
+   |                                              - help: remove this semicolon to return this value
+   |
+   = note: expected type parameter `T`
+                   found unit type `()`
+
+error[E0282]: type annotations needed
+  --> $DIR/transmute_statistics.rs:36:9
+   |
+LL |     let _ = unsafe { transmute_test(d) };
+   |         ^
+   |
+help: consider giving this pattern a type
+   |
+LL |     let _: /* Type */ = unsafe { transmute_test(d) };
+   |          ++++++++++++
+
+error: aborting due to 5 previous errors
+
+Some errors have detailed explanations: E0282, E0308.
+For more information about an error, try `rustc --explain E0282`.
