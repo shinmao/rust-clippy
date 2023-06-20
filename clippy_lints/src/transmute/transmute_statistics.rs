@@ -4,8 +4,6 @@ use rustc_lint::LateContext;
 use rustc_middle::ty::{self, Ty};
 
 use std::error;
-use std::fs::{File, OpenOptions};
-use std::io::Write;
 use std::string::String;
 
 use super::utils::is_layout_incompatible;
@@ -54,13 +52,23 @@ pub(super) fn check<'tcx>(
 }
 
 fn get_ty<'tcx>(cx: &LateContext<'tcx>, matched_ty: Ty<'tcx>) -> String {
-    let matched_type = match (&matched_ty.kind()) {
+    let matched_type = match &matched_ty.kind() {
         ty::Bool => String::from("bool"),
         ty::Char => String::from("char"),
         ty::Int(_) => String::from("int"),
         ty::Uint(_) => String::from("uint"),
         ty::Float(_) => String::from("float"),
-        ty::Adt(adt, substs) => String::from("adt"),
+        ty::Adt(adt_def, substs_def) => {
+            let matched_adt = String::from(adt_def.descr());
+            let man_drop = String::from("ManuallyDrop<");
+            let man_drop_end = String::from(">");
+            let adt_res = if adt_def.is_manually_drop() {
+                man_drop + &matched_adt + &man_drop_end
+            } else {
+                matched_adt
+            };
+            adt_res
+        },
         ty::Foreign(_) => String::from("ffi"),
         ty::Str => String::from("str"),
         ty::Array(arr_ty, _) => {

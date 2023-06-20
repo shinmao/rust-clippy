@@ -1,0 +1,10 @@
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/ice-4968.rs:15:46
+   |
+LL |         let _: Vec<ManuallyDrop<T::Assoc>> = mem::transmute(slice);
+   |                                              ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
+error: aborting due to previous error
+

@@ -6,7 +6,21 @@ LL |         let _: &u64 = std::mem::transmute(0 as *const u64);
    |
    = note: `-D clippy::transmuting-null` implied by `-D warnings`
 
+error: Here is transmute(*const uint>&uint=>warn)!
+  --> $DIR/transmuting_null.rs:10:23
+   |
+LL |         let _: &u64 = std::mem::transmute(0 as *const u64);
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
 error: transmuting a known null pointer into a reference
+  --> $DIR/transmuting_null.rs:11:23
+   |
+LL |         let _: &u64 = std::mem::transmute(std::ptr::null::<u64>());
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const uint>&uint=>warn)!
   --> $DIR/transmuting_null.rs:11:23
    |
 LL |         let _: &u64 = std::mem::transmute(std::ptr::null::<u64>());
@@ -18,5 +32,17 @@ error: transmuting a known null pointer into a reference
 LL |         let _: &u64 = std::mem::transmute(ZPTR);
    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: aborting due to 3 previous errors
+error: Here is transmute(*const uint>&uint=>warn)!
+  --> $DIR/transmuting_null.rs:21:23
+   |
+LL |         let _: &u64 = std::mem::transmute(ZPTR);
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const uint>&uint=>warn)!
+  --> $DIR/transmuting_null.rs:23:23
+   |
+LL |         let _: &u64 = std::mem::transmute(NOT_ZPTR);
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 7 previous errors
 

@@ -1,0 +1,2 @@
+transmute:(float>*const uint>warn)
+transmute:(float>*mut uint>warn)

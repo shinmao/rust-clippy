@@ -539,7 +539,7 @@ impl<'tcx> LateLintPass<'tcx> for Transmute {
                 //    return;
                 //}
 
-                //let linted = wrong_transmute::check(cx, e, from_ty, to_ty)
+                // let linted = wrong_transmute::check(cx, e, from_ty, to_ty)
                 //    | crosspointer_transmute::check(cx, e, from_ty, to_ty)
                 //    | transmuting_null::check(cx, e, arg, to_ty)
                 //    | transmute_null_to_fn::check(cx, e, arg, to_ty)
@@ -558,11 +558,11 @@ impl<'tcx> LateLintPass<'tcx> for Transmute {
                 //        || transmute_undefined_repr::check(cx, e, from_ty, to_ty)
                 //    );
 
-                //if !linted {
+                // if !linted {
                 //    transmutes_expressible_as_ptr_casts::check(cx, e, from_ty, from_ty_adjusted, to_ty, arg);
-                //}
+                // }
 
-                transmute_statistics::check(cx, e, from_ty, to_ty, arg);
+                transmute_statistics::check(cx, e, from_ty, to_ty, arg)
             }
         }
     }

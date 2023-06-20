@@ -1,0 +1,4 @@
+transmute:(*const tuple>fnptr>warn)
+transmute:(*const tuple>fnptr>warn)
+transmute:(*const uint>fnptr>warn)
+transmute:(*const uint>fnptr>warn)

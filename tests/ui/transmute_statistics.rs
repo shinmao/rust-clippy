@@ -13,10 +13,6 @@ pub struct struct_b {
     c: i8,
 }
 
-pub unsafe fn transmute_test<T>(ptr: u64) -> T {
-    std::mem::transmute::<T, T>(ptr as usize);
-}
-
 fn main() {
     let a = 0u32;
     let a = &a as *const u32;
@@ -31,7 +27,4 @@ fn main() {
 
     let sa = struct_a { a: 10, b: 11, c: 12 };
     let sb: &struct_b = unsafe { std::mem::transmute(&sa) };
-
-    let d: u64 = 10;
-    let _ = unsafe { transmute_test(d) };
 }

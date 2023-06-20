@@ -10,3 +10,5 @@ if let StmtKind::Local(local) = stmt.kind
 {
     // report your lint here
 }
+transmute:(*const uint>&int>warn)
+transmute:(*const int>&int>warn)

@@ -6,11 +6,25 @@ LL |         let _: *const usize = std::mem::transmute(6.0f64);
    |
    = note: `-D clippy::wrong-transmute` implied by `-D warnings`
 
+error: Here is transmute(float>*const uint=>warn)!
+  --> $DIR/transmute_64bit.rs:6:31
+   |
+LL |         let _: *const usize = std::mem::transmute(6.0f64);
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
 error: transmute from a `f64` to a pointer
   --> $DIR/transmute_64bit.rs:8:29
    |
 LL |         let _: *mut usize = std::mem::transmute(6.0f64);
    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: aborting due to 2 previous errors
+error: Here is transmute(float>*mut uint=>warn)!
+  --> $DIR/transmute_64bit.rs:8:29
+   |
+LL |         let _: *mut usize = std::mem::transmute(6.0f64);
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 4 previous errors
 

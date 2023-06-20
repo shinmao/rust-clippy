@@ -1,0 +1,5 @@
+transmute:(*const uint>&uint>warn)
+transmute:(*const uint>&uint>warn)
+transmute:(&uint>&uint>warn)
+transmute:(&uint>&uint>warn)
+transmute:(&struct>&struct>warn)

@@ -12,50 +12,51 @@ error: type `struct_b` should have an upper camel case name
 LL | pub struct struct_b {
    |            ^^^^^^^^ help: convert the identifier to upper camel case: `StructB`
 
-error[E0308]: mismatched types
-  --> $DIR/transmute_statistics.rs:17:33
+error: transmute from a pointer type (`*const u32`) to a reference type (`&u32`)
+  --> $DIR/transmute_statistics.rs:19:28
    |
-LL | pub unsafe fn transmute_test<T>(ptr: u64) -> T {
-   |                              - this type parameter
-LL |     std::mem::transmute::<T, T>(ptr as usize);
-   |     --------------------------- ^^^^^^^^^^^^ expected type parameter `T`, found `usize`
-   |     |
-   |     arguments to this function are incorrect
+LL |     let _: &u32 = unsafe { std::mem::transmute(a) };
+   |                            ^^^^^^^^^^^^^^^^^^^^^^ help: try: `&*a`
    |
-   = note: expected type parameter `T`
-                        found type `usize`
-note: function defined here
-  --> /home/rafael/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/intrinsics.rs:1377:12
-   |
-LL |     pub fn transmute<Src, Dst>(src: Src) -> Dst;
-   |            ^^^^^^^^^
+   = note: `-D clippy::transmute-ptr-to-ref` implied by `-D warnings`
 
-error[E0308]: mismatched types
-  --> $DIR/transmute_statistics.rs:16:46
+error: Here is transmute(*const uint>&uint=>warn)!
+  --> $DIR/transmute_statistics.rs:19:28
    |
-LL | pub unsafe fn transmute_test<T>(ptr: u64) -> T {
-   |               -------------- -               ^ expected type parameter `T`, found `()`
-   |               |              |
-   |               |              this type parameter
-   |               implicitly returns `()` as its body has no tail or `return` expression
-LL |     std::mem::transmute::<T, T>(ptr as usize);
-   |                                              - help: remove this semicolon to return this value
+LL |     let _: &u32 = unsafe { std::mem::transmute(a) };
+   |                            ^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: expected type parameter `T`
-                   found unit type `()`
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
 
-error[E0282]: type annotations needed
-  --> $DIR/transmute_statistics.rs:36:9
+error: transmute from a pointer type (`*const u32`) to a reference type (`&u32`)
+  --> $DIR/transmute_statistics.rs:20:28
    |
-LL |     let _ = unsafe { transmute_test(d) };
-   |         ^
-   |
-help: consider giving this pattern a type
-   |
-LL |     let _: /* Type */ = unsafe { transmute_test(d) };
-   |          ++++++++++++
+LL |     let _: &u32 = unsafe { std::mem::transmute::<_, &u32>(a) };
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `&*a.cast::<u32>()`
 
-error: aborting due to 5 previous errors
+error: Here is transmute(*const uint>&uint=>warn)!
+  --> $DIR/transmute_statistics.rs:20:28
+   |
+LL |     let _: &u32 = unsafe { std::mem::transmute::<_, &u32>(a) };
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Some errors have detailed explanations: E0282, E0308.
-For more information about an error, try `rustc --explain E0282`.
+error: Here is transmute(&uint>&uint=>warn)!
+  --> $DIR/transmute_statistics.rs:23:22
+   |
+LL |     let _ = unsafe { std::mem::transmute::<_, &u32>(&b) };
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&uint>&uint=>warn)!
+  --> $DIR/transmute_statistics.rs:26:22
+   |
+LL |     let _ = unsafe { std::mem::transmute::<_, &u8>(&c) };
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&struct>&struct=>warn)!
+  --> $DIR/transmute_statistics.rs:29:34
+   |
+LL |     let sb: &struct_b = unsafe { std::mem::transmute(&sa) };
+   |                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 9 previous errors
+

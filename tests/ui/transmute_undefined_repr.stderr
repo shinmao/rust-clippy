@@ -1,3 +1,35 @@
+error: Here is transmute(struct>tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:22:21
+   |
+LL |         let _: () = transmute(value::<Empty>());
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
+error: Here is transmute(tuple>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:23:24
+   |
+LL |         let _: Empty = transmute(value::<()>());
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(uint>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:25:26
+   |
+LL |         let _: Ty<u32> = transmute(value::<u32>());
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(uint>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:26:26
+   |
+LL |         let _: Ty<u32> = transmute(value::<u32>());
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:28:33
+   |
+LL |         let _: Ty2C<u32, i32> = transmute(value::<Ty2<u32, i32>>()); // Lint, Ty2 is unordered
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from `Ty2<u32, i32>` which has an undefined layout
   --> $DIR/transmute_undefined_repr.rs:28:33
    |
@@ -6,11 +38,35 @@ LL |         let _: Ty2C<u32, i32> = transmute(value::<Ty2<u32, i32>>()); // Lin
    |
    = note: `-D clippy::transmute-undefined-repr` implied by `-D warnings`
 
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:29:32
+   |
+LL |         let _: Ty2<u32, i32> = transmute(value::<Ty2C<u32, i32>>()); // Lint, Ty2 is unordered
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute into `Ty2<u32, i32>` which has an undefined layout
   --> $DIR/transmute_undefined_repr.rs:29:32
    |
 LL |         let _: Ty2<u32, i32> = transmute(value::<Ty2C<u32, i32>>()); // Lint, Ty2 is unordered
    |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:31:32
+   |
+LL |         let _: Ty2<u32, i32> = transmute(value::<Ty<Ty2<u32, i32>>>()); // Ok, Ty2 types are the same
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:32:36
+   |
+LL |         let _: Ty<Ty2<u32, i32>> = transmute(value::<Ty2<u32, i32>>()); // Ok, Ty2 types are the same
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:34:32
+   |
+LL |         let _: Ty2<u32, f32> = transmute(value::<Ty<Ty2<u32, i32>>>()); // Lint, different Ty2 instances
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: transmute from `Ty<Ty2<u32, i32>>` to `Ty2<u32, f32>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:34:32
@@ -20,6 +76,12 @@ LL |         let _: Ty2<u32, f32> = transmute(value::<Ty<Ty2<u32, i32>>>()); // 
    |
    = note: two instances of the same generic type (`Ty2`) may have different layouts
 
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:35:36
+   |
+LL |         let _: Ty<Ty2<u32, i32>> = transmute(value::<Ty2<u32, f32>>()); // Lint, different Ty2 instances
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from `Ty2<u32, f32>` to `Ty<Ty2<u32, i32>>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:35:36
    |
@@ -27,6 +89,24 @@ LL |         let _: Ty<Ty2<u32, i32>> = transmute(value::<Ty2<u32, f32>>()); // 
    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: two instances of the same generic type (`Ty2`) may have different layouts
+
+error: Here is transmute(&tuple>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:37:26
+   |
+LL |         let _: Ty<&()> = transmute(value::<&()>());
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>&tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:38:22
+   |
+LL |         let _: &() = transmute(value::<Ty<&()>>());
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>&struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:40:33
+   |
+LL |         let _: &Ty2<u32, f32> = transmute(value::<Ty<&Ty2<u32, i32>>>()); // Lint, different Ty2 instances
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: transmute from `Ty<&Ty2<u32, i32>>` to `&Ty2<u32, f32>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:40:33
@@ -36,6 +116,12 @@ LL |         let _: &Ty2<u32, f32> = transmute(value::<Ty<&Ty2<u32, i32>>>()); /
    |
    = note: two instances of the same generic type (`Ty2`) may have different layouts
 
+error: Here is transmute(&struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:41:37
+   |
+LL |         let _: Ty<&Ty2<u32, i32>> = transmute(value::<&Ty2<u32, f32>>()); // Lint, different Ty2 instances
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from `&Ty2<u32, f32>` to `Ty<&Ty2<u32, i32>>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:41:37
    |
@@ -43,6 +129,72 @@ LL |         let _: Ty<&Ty2<u32, i32>> = transmute(value::<&Ty2<u32, f32>>()); /
    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: two instances of the same generic type (`Ty2`) may have different layouts
+
+error: Here is transmute(&struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:43:28
+   |
+LL |         let _: Ty<usize> = transmute(value::<&Ty2<u32, i32>>()); // Ok, pointer to usize conversion
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>&struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:44:33
+   |
+LL |         let _: &Ty2<u32, i32> = transmute(value::<Ty<usize>>()); // Ok, pointer to usize conversion
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:46:30
+   |
+LL |         let _: Ty<[u8; 8]> = transmute(value::<Ty2<u32, i32>>()); // Ok, transmute to byte array
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>safe)!
+  --> $DIR/transmute_undefined_repr.rs:47:32
+   |
+LL |         let _: Ty2<u32, i32> = transmute(value::<Ty<[u8; 8]>>()); // Ok, transmute from byte array
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:50:42
+   |
+LL |         let _: Ty2C<Ty2<u32, i32>, ()> = transmute(value::<Ty2<u32, i32>>()); // Ok, Ty2 types are the same
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:51:32
+   |
+LL |         let _: Ty2<u32, i32> = transmute(value::<Ty2C<Ty2<u32, i32>, ()>>()); // Ok, Ty2 types are the same
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>&mut struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:53:45
+   |
+LL |         let _: &'static mut Ty2<u32, u32> = transmute(value::<Box<Ty2<u32, u32>>>()); // Ok, Ty2 types are the same
+   |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&mut struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:54:37
+   |
+LL |         let _: Box<Ty2<u32, u32>> = transmute(value::<&'static mut Ty2<u32, u32>>()); // Ok, Ty2 types are the same
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>*mut struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:55:37
+   |
+LL |         let _: *mut Ty2<u32, u32> = transmute(value::<Box<Ty2<u32, u32>>>()); // Ok, Ty2 types are the same
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*mut struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:56:37
+   |
+LL |         let _: Box<Ty2<u32, u32>> = transmute(value::<*mut Ty2<u32, u32>>()); // Ok, Ty2 types are the same
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>&mut struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:58:45
+   |
+LL |         let _: &'static mut Ty2<u32, f32> = transmute(value::<Box<Ty2<u32, u32>>>()); // Lint, different Ty2 instances
+   |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: transmute from `std::boxed::Box<Ty2<u32, u32>>` to `&mut Ty2<u32, f32>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:58:45
@@ -52,6 +204,12 @@ LL |         let _: &'static mut Ty2<u32, f32> = transmute(value::<Box<Ty2<u32, 
    |
    = note: two instances of the same generic type (`Ty2`) may have different layouts
 
+error: Here is transmute(&mut struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:59:37
+   |
+LL |         let _: Box<Ty2<u32, u32>> = transmute(value::<&'static mut Ty2<u32, f32>>()); // Lint, different Ty2 instances
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from `&mut Ty2<u32, f32>` to `std::boxed::Box<Ty2<u32, u32>>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:59:37
    |
@@ -59,6 +217,222 @@ LL |         let _: Box<Ty2<u32, u32>> = transmute(value::<&'static mut Ty2<u32,
    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: two instances of the same generic type (`Ty2`) may have different layouts
+
+error: Here is transmute(struct>*const tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:61:28
+   |
+LL |         let _: *const () = transmute(value::<Ty<&Ty2<u32, f32>>>()); // Ok, type erasure
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const tuple>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:62:37
+   |
+LL |         let _: Ty<&Ty2<u32, f32>> = transmute(value::<*const ()>()); // Ok, reverse type erasure
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>*const enum=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:64:32
+   |
+LL |         let _: *const c_void = transmute(value::<Ty<&Ty2<u32, f32>>>()); // Ok, type erasure
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const enum>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:65:37
+   |
+LL |         let _: Ty<&Ty2<u32, f32>> = transmute(value::<*const c_void>()); // Ok, reverse type erasure
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>*const enum=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:68:31
+   |
+LL |         let _: *const Erase = transmute(value::<Ty<&Ty2<u32, f32>>>()); // Ok, type erasure
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const enum>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:69:37
+   |
+LL |         let _: Ty<&Ty2<u32, f32>> = transmute(value::<*const Erase>()); // Ok, reverse type erasure
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>*const struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:75:32
+   |
+LL |         let _: *const Erase2 = transmute(value::<Ty<&Ty2<u32, f32>>>()); // Ok, type erasure
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:76:37
+   |
+LL |         let _: Ty<&Ty2<u32, f32>> = transmute(value::<*const Erase2>()); // Ok, reverse type erasure
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&&&[uint]>*const tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:78:28
+   |
+LL |         let _: *const () = transmute(value::<&&[u8]>()); // Ok, type erasure
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const tuple>&&&[uint]=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:79:25
+   |
+LL |         let _: &&[u8] = transmute(value::<*const ()>()); // Ok, reverse type erasure
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&mut &&[uint]>*mut enum=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:81:30
+   |
+LL |         let _: *mut c_void = transmute(value::<&mut &[u8]>()); // Ok, type erasure
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*mut enum>&mut &&[uint]=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:82:29
+   |
+LL |         let _: &mut &[u8] = transmute(value::<*mut c_void>()); // Ok, reverse type erasure
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&&[uint]>[uint]=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:84:43
+   |
+LL |         let _: [u8; size_of::<&[u8]>()] = transmute(value::<&[u8]>()); // Ok, transmute to byte array
+   |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute([uint]>&&[uint]=>safe)!
+  --> $DIR/transmute_undefined_repr.rs:85:24
+   |
+LL |         let _: &[u8] = transmute(value::<[u8; size_of::<&[u8]>()]>()); // Ok, transmute from byte array
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&&[uint]>[uint]=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:87:29
+   |
+LL |         let _: [usize; 2] = transmute(value::<&[u8]>()); // Ok, transmute to int array
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute([uint]>&&[uint]=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:88:24
+   |
+LL |         let _: &[u8] = transmute(value::<[usize; 2]>()); // Ok, transmute from int array
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>*const &[uint]=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:90:30
+   |
+LL |         let _: *const [u8] = transmute(value::<Box<[u8]>>()); // Ok
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*mut &[uint]>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:91:28
+   |
+LL |         let _: Box<[u8]> = transmute(value::<*mut [u8]>()); // Ok
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(tuple>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:93:32
+   |
+LL |         let _: Ty2<u32, u32> = transmute(value::<(Ty2<u32, u32>,)>()); // Ok
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:94:35
+   |
+LL |         let _: (Ty2<u32, u32>,) = transmute(value::<Ty2<u32, u32>>()); // Ok
+   |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(tuple>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:96:32
+   |
+LL |         let _: Ty2<u32, u32> = transmute(value::<(Ty2<u32, u32>, ())>()); // Ok
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:97:38
+   |
+LL |         let _: (Ty2<u32, u32>, ()) = transmute(value::<Ty2<u32, u32>>()); // Ok
+   |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(tuple>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:99:32
+   |
+LL |         let _: Ty2<u32, u32> = transmute(value::<((), Ty2<u32, u32>)>()); // Ok
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:100:38
+   |
+LL |         let _: ((), Ty2<u32, u32>) = transmute(value::<Ty2<u32, u32>>()); // Ok
+   |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&&[uint]>tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:102:33
+   |
+LL |         let _: (usize, usize) = transmute(value::<&[u8]>()); // Ok
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(tuple>&&[uint]=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:103:24
+   |
+LL |         let _: &[u8] = transmute(value::<(usize, usize)>()); // Ok
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&trait obj>tuple=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:106:33
+   |
+LL |         let _: (isize, isize) = transmute(value::<&dyn Trait>()); // Ok
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(tuple>&trait obj=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:107:29
+   |
+LL |         let _: &dyn Trait = transmute(value::<(isize, isize)>()); // Ok
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>union=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:109:45
+   |
+LL |         let _: MaybeUninit<Ty2<u32, u32>> = transmute(value::<Ty2<u32, u32>>()); // Ok
+   |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(union>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:110:32
+   |
+LL |         let _: Ty2<u32, u32> = transmute(value::<MaybeUninit<Ty2<u32, u32>>>()); // Ok
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&&[uint]>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:112:29
+   |
+LL |         let _: Ty<&[u32]> = transmute::<&[u32], _>(value::<&Vec<u32>>()); // Ok
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const struct>*const struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:114:39
+   |
+LL |         let _: *const Ty2<u32, u32> = transmute(value::<*const Ty2C<Ty2<u32, u32>, u32>>()); // Ok
+   |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const struct>*const struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:115:50
+   |
+LL |         let _: *const Ty2C<Ty2<u32, u32>, u32> = transmute(value::<*const Ty2<u32, u32>>()); // Ok
+   |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const struct>*const struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:116:39
+   |
+LL |         let _: *const Ty2<u32, u32> = transmute(value::<*const Ty2C<(), Ty2<u32, u32>>>()); // Ok
+   |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const struct>*const struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:117:49
+   |
+LL |         let _: *const Ty2C<(), Ty2<u32, u32>> = transmute(value::<*const Ty2<u32, u32>>()); // Ok
+   |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const struct>*const struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:119:39
+   |
+LL |         let _: *const Ty2<u32, u32> = transmute(value::<*const Ty2C<u32, Ty2<u32, u32>>>()); // Err
+   |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: transmute into `*const Ty2<u32, u32>` which has an undefined layout
   --> $DIR/transmute_undefined_repr.rs:119:39
@@ -68,6 +442,12 @@ LL |         let _: *const Ty2<u32, u32> = transmute(value::<*const Ty2C<u32, Ty
    |
    = note: the contained type `Ty2<u32, u32>` has an undefined layout
 
+error: Here is transmute(*const struct>*const struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:120:50
+   |
+LL |         let _: *const Ty2C<u32, Ty2<u32, u32>> = transmute(value::<*const Ty2<u32, u32>>()); // Err
+   |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from `*const Ty2<u32, u32>` which has an undefined layout
   --> $DIR/transmute_undefined_repr.rs:120:50
    |
@@ -75,6 +455,96 @@ LL |         let _: *const Ty2C<u32, Ty2<u32, u32>> = transmute(value::<*const T
    |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: the contained type `Ty2<u32, u32>` has an undefined layout
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:122:30
+   |
+LL |         let _: NonNull<u8> = transmute(value::<NonNull<(String, String)>>()); // Ok
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:123:44
+   |
+LL |         let _: NonNull<(String, String)> = transmute(value::<NonNull<u8>>()); // Ok
+   |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&param>&uint=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:132:23
+   |
+LL |         let _: &u32 = transmute(value::<&T>()); // Ok
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&uint>&param=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:133:21
+   |
+LL |         let _: &T = transmute(value::<&u32>()); // Ok
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:135:25
+   |
+LL |         let _: Vec<U> = transmute(value::<Vec<T>>()); // Ok
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:136:25
+   |
+LL |         let _: Vec<T> = transmute(value::<Vec<U>>()); // Ok
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&param>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:138:27
+   |
+LL |         let _: Ty<&u32> = transmute(value::<&T>()); // Ok
+   |                           ^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&uint>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:139:25
+   |
+LL |         let _: Ty<&T> = transmute(value::<&u32>()); // Ok
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:141:27
+   |
+LL |         let _: Vec<u32> = transmute(value::<Vec<T>>()); // Ok
+   |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:142:25
+   |
+LL |         let _: Vec<T> = transmute(value::<Vec<u32>>()); // Ok
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&struct>&struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:144:33
+   |
+LL |         let _: &Ty2<u32, u32> = transmute(value::<&Ty2<T, U>>()); // Ok
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&struct>&struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:145:29
+   |
+LL |         let _: &Ty2<T, U> = transmute(value::<&Ty2<u32, u32>>()); // Ok
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:147:32
+   |
+LL |         let _: Vec<Vec<u32>> = transmute(value::<Vec<Vec<T>>>()); // Ok
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:148:30
+   |
+LL |         let _: Vec<Vec<T>> = transmute(value::<Vec<Vec<u32>>>()); // Ok
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:150:35
+   |
+LL |         let _: Vec<Ty2<T, u32>> = transmute(value::<Vec<Ty2<U, i32>>>()); // Err
+   |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: transmute from `std::vec::Vec<Ty2<U, i32>>` to `std::vec::Vec<Ty2<T, u32>>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:150:35
@@ -84,6 +554,12 @@ LL |         let _: Vec<Ty2<T, u32>> = transmute(value::<Vec<Ty2<U, i32>>>()); /
    |
    = note: two instances of the same generic type (`Vec`) may have different layouts
 
+error: Here is transmute(struct>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:151:35
+   |
+LL |         let _: Vec<Ty2<U, i32>> = transmute(value::<Vec<Ty2<T, u32>>>()); // Err
+   |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from `std::vec::Vec<Ty2<T, u32>>` to `std::vec::Vec<Ty2<U, i32>>`, both of which have an undefined layout
   --> $DIR/transmute_undefined_repr.rs:151:35
    |
@@ -92,5 +568,17 @@ LL |         let _: Vec<Ty2<U, i32>> = transmute(value::<Vec<Ty2<T, u32>>>()); /
    |
    = note: two instances of the same generic type (`Vec`) may have different layouts
 
-error: aborting due to 12 previous errors
+error: Here is transmute(struct>*const uint=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:153:29
+   |
+LL |         let _: *const u32 = transmute(value::<Box<T>>()); // Ok
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(*const uint>struct=>warn)!
+  --> $DIR/transmute_undefined_repr.rs:154:25
+   |
+LL |         let _: Box<T> = transmute(value::<*const u32>()); // Ok
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 93 previous errors
 

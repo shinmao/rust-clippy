@@ -156,6 +156,14 @@ error: unnecessary structure name repetition
 LL |             Foo::<T> { value }
    |             ^^^^^^^^ help: use the applicable keyword: `Self`
 
+error: Here is transmute(struct>uint=>safe)!
+  --> $DIR/use_self.rs:428:22
+   |
+LL |             unsafe { core::mem::transmute(c) }
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
 error: unnecessary structure name repetition
   --> $DIR/use_self.rs:458:13
    |
@@ -252,5 +260,5 @@ error: unnecessary structure name repetition
 LL |                 E::A => {},
    |                 ^ help: use the applicable keyword: `Self`
 
-error: aborting due to 42 previous errors
+error: aborting due to 43 previous errors
 

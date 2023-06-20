@@ -1,0 +1,16 @@
+error: Here is transmute([uint]>uint=>safe)!
+  --> $DIR/ice-1782.rs:15:17
+   |
+LL |                 mem::transmute::<[u8; 4], _>([0, 0, 0, 255]),
+   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
+error: Here is transmute([uint]>uint=>safe)!
+  --> $DIR/ice-1782.rs:21:17
+   |
+LL |                 mem::transmute::<[u8; 4], _>([13, 246, 24, 255]),
+   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 2 previous errors
+

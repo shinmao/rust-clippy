@@ -30,5 +30,13 @@ LL |     if true && x == 3 { 6 } else { 10 }
    |
    = note: `-D clippy::nonminimal-bool` implied by `-D warnings`
 
-error: aborting due to 3 previous errors
+error: Here is transmute(int>uint=>warn)!
+  --> $DIR/blocks_in_if_conditions.rs:47:25
+   |
+LL |     if unsafe { 1u32 == std::mem::transmute(a) } {
+   |                         ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
+error: aborting due to 4 previous errors
 

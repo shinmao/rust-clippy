@@ -1,0 +1,16 @@
+error: Here is transmute(*const uint>&int=>warn)!
+  --> $DIR/issue_3849.rs:11:23
+   |
+LL |         let _: &i32 = std::mem::transmute(ZPTR);
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
+error: Here is transmute(*const int>&int=>warn)!
+  --> $DIR/issue_3849.rs:12:23
+   |
+LL |         let _: &i32 = std::mem::transmute(0 as *const i32);
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 2 previous errors
+

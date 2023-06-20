@@ -1,3 +1,17 @@
+error: Here is transmute(&param>&param=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:9:5
+   |
+LL |     std::mem::transmute::<&'a T, &'static T>(t)
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::transmute-statistics` implied by `-D warnings`
+
+error: Here is transmute(&param>&param=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:14:5
+   |
+LL |     std::mem::transmute::<&'a T, &'b T>(t)
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from a pointer to a pointer
   --> $DIR/transmute_ptr_to_ptr.rs:30:29
    |
@@ -6,11 +20,23 @@ LL |         let _: *const f32 = std::mem::transmute(ptr);
    |
    = note: `-D clippy::transmute-ptr-to-ptr` implied by `-D warnings`
 
+error: Here is transmute(*const uint>*const float=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:30:29
+   |
+LL |         let _: *const f32 = std::mem::transmute(ptr);
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from a pointer to a pointer
   --> $DIR/transmute_ptr_to_ptr.rs:31:27
    |
 LL |         let _: *mut f32 = std::mem::transmute(mut_ptr);
    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `mut_ptr as *mut f32`
+
+error: Here is transmute(*mut uint>*mut float=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:31:27
+   |
+LL |         let _: *mut f32 = std::mem::transmute(mut_ptr);
+   |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: transmute from a reference to a reference
   --> $DIR/transmute_ptr_to_ptr.rs:33:23
@@ -18,11 +44,23 @@ error: transmute from a reference to a reference
 LL |         let _: &f32 = std::mem::transmute(&1u32);
    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `&*(&1u32 as *const u32 as *const f32)`
 
+error: Here is transmute(&uint>&float=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:33:23
+   |
+LL |         let _: &f32 = std::mem::transmute(&1u32);
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from a reference to a reference
   --> $DIR/transmute_ptr_to_ptr.rs:34:23
    |
 LL |         let _: &f64 = std::mem::transmute(&1f32);
    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `&*(&1f32 as *const f32 as *const f64)`
+
+error: Here is transmute(&float>&float=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:34:23
+   |
+LL |         let _: &f64 = std::mem::transmute(&1f32);
+   |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: transmute from a reference to a reference
   --> $DIR/transmute_ptr_to_ptr.rs:37:27
@@ -30,11 +68,41 @@ error: transmute from a reference to a reference
 LL |         let _: &mut f32 = std::mem::transmute(&mut 1u32);
    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `&mut *(&mut 1u32 as *mut u32 as *mut f32)`
 
+error: Here is transmute(&mut uint>&mut float=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:37:27
+   |
+LL |         let _: &mut f32 = std::mem::transmute(&mut 1u32);
+   |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: transmute from a reference to a reference
   --> $DIR/transmute_ptr_to_ptr.rs:38:37
    |
 LL |         let _: &GenericParam<f32> = std::mem::transmute(&GenericParam { t: 1u32 });
    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `&*(&GenericParam { t: 1u32 } as *const GenericParam<u32> as *const GenericParam<f32>)`
 
-error: aborting due to 6 previous errors
+error: Here is transmute(&struct>&struct=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:38:37
+   |
+LL |         let _: &GenericParam<f32> = std::mem::transmute(&GenericParam { t: 1u32 });
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&struct>&struct=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:51:47
+   |
+LL |     let _: &LifetimeParam<'static> = unsafe { std::mem::transmute(&lp) };
+   |                                               ^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&struct>&struct=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:52:62
+   |
+LL |     let _: &GenericParam<&LifetimeParam<'static>> = unsafe { std::mem::transmute(&GenericParam { t: &lp }) };
+   |                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: Here is transmute(&struct>&tuple=>warn)!
+  --> $DIR/transmute_ptr_to_ptr.rs:60:14
+   |
+LL |     unsafe { std::mem::transmute::<&'static Zst, &'static ()>(zst) }
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 17 previous errors
 
