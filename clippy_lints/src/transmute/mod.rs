@@ -562,7 +562,7 @@ impl<'tcx> LateLintPass<'tcx> for Transmute {
                 //    transmutes_expressible_as_ptr_casts::check(cx, e, from_ty, from_ty_adjusted, to_ty, arg);
                 // }
 
-                transmute_statistics::check(cx, e, from_ty, to_ty, arg)
+                transmute_statistics::check(cx, e, from_ty, to_ty, arg);
             }
         }
     }

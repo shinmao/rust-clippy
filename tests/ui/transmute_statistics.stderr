@@ -12,14 +12,6 @@ error: type `struct_b` should have an upper camel case name
 LL | pub struct struct_b {
    |            ^^^^^^^^ help: convert the identifier to upper camel case: `StructB`
 
-error: transmute from a pointer type (`*const u32`) to a reference type (`&u32`)
-  --> $DIR/transmute_statistics.rs:19:28
-   |
-LL |     let _: &u32 = unsafe { std::mem::transmute(a) };
-   |                            ^^^^^^^^^^^^^^^^^^^^^^ help: try: `&*a`
-   |
-   = note: `-D clippy::transmute-ptr-to-ref` implied by `-D warnings`
-
 error: Here is transmute(*const uint>&uint=>warn)!
   --> $DIR/transmute_statistics.rs:19:28
    |
@@ -27,12 +19,6 @@ LL |     let _: &u32 = unsafe { std::mem::transmute(a) };
    |                            ^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: `-D clippy::transmute-statistics` implied by `-D warnings`
-
-error: transmute from a pointer type (`*const u32`) to a reference type (`&u32`)
-  --> $DIR/transmute_statistics.rs:20:28
-   |
-LL |     let _: &u32 = unsafe { std::mem::transmute::<_, &u32>(a) };
-   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `&*a.cast::<u32>()`
 
 error: Here is transmute(*const uint>&uint=>warn)!
   --> $DIR/transmute_statistics.rs:20:28
@@ -58,5 +44,5 @@ error: Here is transmute(&struct>&struct=>warn)!
 LL |     let sb: &struct_b = unsafe { std::mem::transmute(&sa) };
    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: aborting due to 9 previous errors
+error: aborting due to 7 previous errors
 

@@ -59,7 +59,16 @@ fn get_ty<'tcx>(cx: &LateContext<'tcx>, matched_ty: Ty<'tcx>) -> String {
         ty::Uint(_) => String::from("uint"),
         ty::Float(_) => String::from("float"),
         ty::Adt(adt_def, substs_def) => {
-            let matched_adt = String::from(adt_def.descr());
+            //let matched_adt = String::from(adt_def.descr());
+            let matched_adt = if adt_def.is_struct() {
+                String::from("struct")
+            } else if adt_def.is_union() {
+                String::from("union")
+            } else if adt_def.is_enum() {
+                String::from("enum")
+            } else {
+                String::from("adt")
+            };
             let man_drop = String::from("ManuallyDrop<");
             let man_drop_end = String::from(">");
             let adt_res = if adt_def.is_manually_drop() {
