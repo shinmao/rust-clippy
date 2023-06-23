@@ -1,15 +1,13 @@
 use clippy_utils::diagnostics::span_lint;
-use rustc_hir::{Expr, Mutability};
+use rustc_hir::{Expr, Mutability, hir_id::HirId};
 use rustc_lint::LateContext;
 use rustc_middle::ty::{self, Ty};
 
-use std::error;
 use std::string::String;
+use std::panic;
 
 use super::utils::is_layout_incompatible;
 use super::TRANSMUTE_STATISTICS;
-
-type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 
 pub(super) fn check<'tcx>(
     cx: &LateContext<'tcx>,
@@ -21,10 +19,14 @@ pub(super) fn check<'tcx>(
     // get the type information of src and dst types
     let src_type = get_ty(cx, from_ty);
     let dst_type = get_ty(cx, to_ty);
+
     // get current function name
+    // cx.tcx.hir() will return Map
+    // owner_id is hirid of owner where owner is the current function
     let owner_id = cx.enclosing_body.map(|body_id| cx.tcx.hir().body_owner(body_id)).unwrap();
     let cur_fn_name = cx.tcx.hir().name(owner_id).to_ident_string();
     println!("transmute caller:{}", cur_fn_name);
+
     // whether has size or alignment issues
     let unsound = if let Ok(from) = cx.tcx.try_normalize_erasing_regions(cx.param_env, from_ty)
         && let Ok(to) = cx.tcx.try_normalize_erasing_regions(cx.param_env, to_ty)
@@ -34,10 +36,10 @@ pub(super) fn check<'tcx>(
         // if no any pointer type involved in transmute, then there are no any size or alignment issues
         if !(src_type.contains("&") || dst_type.contains("&") || src_type.contains("*") || dst_type.contains("*")) {
             String::from("safe")
-        } else if !(from_layout.size < to_layout.size) {
-            String::from("warn(size)")
         } else if !(from_layout.align.abi < to_layout.align.abi) {
             String::from("warn(align)")
+        } else if !(from_layout.size < to_layout.size) {
+            String::from("warn(size)")
         } else {
             String::from("safe")
         }

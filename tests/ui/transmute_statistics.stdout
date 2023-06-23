@@ -1,5 +1,12 @@
-transmute:(*const uint>&uint>warn)
-transmute:(*const uint>&uint>warn)
-transmute:(&uint>&uint>warn)
-transmute:(&uint>&uint>warn)
-transmute:(&struct>&struct>warn)
+transmute caller:sa_to_sb
+transmute:(&struct>&struct>warn(align))
+transmute caller:from
+transmute:(struct>struct>safe)
+transmute caller:main
+transmute:(*const uint>&uint>warn(align))
+transmute caller:main
+transmute:(*const uint>&uint>warn(align))
+transmute caller:main
+transmute:(&uint>&uint>warn(align))
+transmute caller:main
+transmute:(&uint>&uint>warn(align))
