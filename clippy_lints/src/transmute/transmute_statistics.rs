@@ -18,24 +18,29 @@ pub(super) fn check<'tcx>(
     to_ty: Ty<'tcx>,
     arg: &'tcx Expr<'_>,
 ) -> bool {
+    // get the type information of src and dst types
     let src_type = get_ty(cx, from_ty);
     let dst_type = get_ty(cx, to_ty);
+    // get current function name
+    let owner_id = cx.enclosing_body.map(|body_id| cx.tcx.hir().body_owner(body_id)).unwrap();
+    let cur_fn_name = cx.tcx.hir().name(owner_id).to_ident_string();
+    println!("transmute caller:{}", cur_fn_name);
+    // whether has size or alignment issues
     let unsound = if let Ok(from) = cx.tcx.try_normalize_erasing_regions(cx.param_env, from_ty)
         && let Ok(to) = cx.tcx.try_normalize_erasing_regions(cx.param_env, to_ty)
         && let Ok(from_layout) = cx.tcx.layout_of(cx.param_env.and(from_ty))
         && let Ok(to_layout) = cx.tcx.layout_of(cx.param_env.and(to_ty))
     {
-        if !(from_layout.size != to_layout.size || from_layout.align.abi < to_layout.align.abi) {
-            String::from("warn")
+        // if no any pointer type involved in transmute, then there are no any size or alignment issues
+        if !(src_type.contains("&") || dst_type.contains("&") || src_type.contains("*") || dst_type.contains("*")) {
+            String::from("safe")
+        } else if !(from_layout.size < to_layout.size) {
+            String::from("warn(size)")
+        } else if !(from_layout.align.abi < to_layout.align.abi) {
+            String::from("warn(align)")
         } else {
             String::from("safe")
         }
-        // let split = String::from("/");
-        // let from_layout_size = from_layout.size.raw.to_string();
-        // let to_layout_size = to_layout.size.raw.to_string();
-        // let from_layout_align = from_layout.align.abi.pow2.to_string();
-        // let to_layout_align = to_layout.align.abi.pow2.to_string();
-        // from_layout_size + &split + &to_layout_size + &split + &from_layout_align + &split + &to_layout_align
 
     } else {
         // no idea about layout, so don't lint

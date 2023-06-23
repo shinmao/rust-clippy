@@ -215,3 +215,15 @@ declare_deprecated_lint! {
     pub WRONG_PUB_SELF_CONVENTION,
     "set the `avoid-breaking-exported-api` config option to `false` to enable the `wrong_self_convention` lint for public items"
 }
+
+declare_deprecated_lint! {
+    /// ### What it does
+    /// Nothing. This lint has been deprecated.
+    ///
+    /// ### Deprecation reason
+    /// TODO
+    #[clippy::version = "1.72.0"]
+    pub TY_CONV_TRAITS,
+    "default deprecation note"
+}
+

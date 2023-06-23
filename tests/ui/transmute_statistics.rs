@@ -1,16 +1,22 @@
 #![allow(unused)]
 #![warn(clippy::transmute_statistics)]
 
+#[repr(C)]
 pub struct struct_a {
     a: i8,
     b: i32,
     c: i8,
 }
 
+#[repr(C)]
 pub struct struct_b {
     a: i8,
     b: i32,
     c: i8,
+}
+
+fn sa_to_sb(sa: &struct_a) -> &struct_b {
+    unsafe { std::mem::transmute(sa) }
 }
 
 fn main() {
@@ -26,5 +32,5 @@ fn main() {
     let _ = unsafe { std::mem::transmute::<_, &u8>(&c) };
 
     let sa = struct_a { a: 10, b: 11, c: 12 };
-    let sb: &struct_b = unsafe { std::mem::transmute(&sa) };
+    let sb = sa_to_sb(&sa);
 }

@@ -67,4 +67,8 @@
         "clippy::wrong_pub_self_convention",
         "set the `avoid-breaking-exported-api` config option to `false` to enable the `wrong_self_convention` lint for public items",
     );
+    store.register_removed(
+        "clippy::ty_conv_traits",
+        "default deprecation note",
+    );
 }
