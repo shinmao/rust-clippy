@@ -53,7 +53,7 @@ pub(super) fn check<'tcx>(
         cx,
         TRANSMUTE_STATISTICS,
         e.span,
-        &format!("Here is transmute({src_type}>{dst_type}=>{unsound})!"),
+        &format!("Here is transmute({cur_fn_name}>{src_type}>{dst_type}=>{unsound})!"),
     );
     true
 }

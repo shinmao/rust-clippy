@@ -1,4 +1,4 @@
-error: Here is transmute(&struct>&struct=>warn(align))!
+error: Here is transmute(sa_to_sb>&struct>&struct=>warn(align))!
   --> $DIR/transmute_statistics.rs:19:14
    |
 LL |     unsafe { std::mem::transmute(sa) }
@@ -6,31 +6,31 @@ LL |     unsafe { std::mem::transmute(sa) }
    |
    = note: `-D clippy::transmute-statistics` implied by `-D warnings`
 
-error: Here is transmute(struct>struct=>safe)!
+error: Here is transmute(from>struct>struct=>safe)!
   --> $DIR/transmute_statistics.rs:24:18
    |
 LL |         unsafe { std::mem::transmute(item) }
    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(*const uint>&uint=>warn(align))!
+error: Here is transmute(main>*const uint>&uint=>warn(align))!
   --> $DIR/transmute_statistics.rs:31:28
    |
 LL |     let _: &u32 = unsafe { std::mem::transmute(a) };
    |                            ^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(*const uint>&uint=>warn(align))!
+error: Here is transmute(main>*const uint>&uint=>warn(align))!
   --> $DIR/transmute_statistics.rs:32:28
    |
 LL |     let _: &u32 = unsafe { std::mem::transmute::<_, &u32>(a) };
    |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(&uint>&uint=>warn(align))!
+error: Here is transmute(main>&uint>&uint=>warn(align))!
   --> $DIR/transmute_statistics.rs:35:22
    |
 LL |     let _ = unsafe { std::mem::transmute::<_, &u32>(&b) };
    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(&uint>&uint=>warn(align))!
+error: Here is transmute(main>&uint>&uint=>warn(align))!
   --> $DIR/transmute_statistics.rs:38:22
    |
 LL |     let _ = unsafe { std::mem::transmute::<_, &u8>(&c) };
