@@ -6,6 +6,18 @@
 extern crate proc_macros;
 use proc_macros::{external, inline_macros};
 
+pub struct A {
+    a: i8, 
+    b: i32,
+    c: i8,
+}
+
+pub struct B {
+    a: i8, 
+    b: i32,
+    c: i8,
+}
+
 #[inline_macros]
 fn main() {
     let ptr: *const u32 = &42_u32;
@@ -38,6 +50,11 @@ fn main() {
 
     // Do not lint inside macros from external crates
     let _ = external!($ptr as *const i32);
+
+    let sa = A { a: 10, b: 11, c: 12 };
+    let sa_ptr: *const A = &sa;
+    let mut_sa_ptr= sa_ptr as *mut A;
+    let mut_sb_ref = unsafe { &*(mut_sa_ptr as *mut B) };
 }
 
 #[clippy::msrv = "1.37"]
