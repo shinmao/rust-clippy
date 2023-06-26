@@ -1,4 +1,4 @@
-error: Here is transmute(sa_to_sb>&struct>&struct=>warn(align))!
+error: Here is transmute(sa_to_sb>&struct>&struct=>warn(adt))!
   --> $DIR/transmute_statistics.rs:19:14
    |
 LL |     unsafe { std::mem::transmute(sa) }
@@ -12,25 +12,25 @@ error: Here is transmute(from>struct>struct=>safe)!
 LL |         unsafe { std::mem::transmute(item) }
    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(main>*const uint>&uint=>warn(align))!
+error: Here is transmute(main>*const uint>&uint=>safe)!
   --> $DIR/transmute_statistics.rs:31:28
    |
 LL |     let _: &u32 = unsafe { std::mem::transmute(a) };
    |                            ^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(main>*const uint>&uint=>warn(align))!
+error: Here is transmute(main>*const uint>&uint=>safe)!
   --> $DIR/transmute_statistics.rs:32:28
    |
 LL |     let _: &u32 = unsafe { std::mem::transmute::<_, &u32>(a) };
    |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(main>&uint>&uint=>warn(align))!
+error: Here is transmute(main>&uint>&uint=>warn(align1>4))!
   --> $DIR/transmute_statistics.rs:35:22
    |
 LL |     let _ = unsafe { std::mem::transmute::<_, &u32>(&b) };
    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: Here is transmute(main>&uint>&uint=>warn(align))!
+error: Here is transmute(main>&uint>&uint=>safe)!
   --> $DIR/transmute_statistics.rs:38:22
    |
 LL |     let _ = unsafe { std::mem::transmute::<_, &u8>(&c) };

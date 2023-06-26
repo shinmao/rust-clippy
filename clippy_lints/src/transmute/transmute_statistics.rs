@@ -1,12 +1,10 @@
 use clippy_utils::diagnostics::span_lint;
-use rustc_hir::{Expr, Mutability, hir_id::HirId};
+use rustc_hir::{Expr, Mutability};
 use rustc_lint::LateContext;
 use rustc_middle::ty::{self, Ty};
+use rustc_middle::ty::layout::LayoutOf;
 
 use std::string::String;
-use std::panic;
-
-use super::utils::is_layout_incompatible;
 use super::TRANSMUTE_STATISTICS;
 
 pub(super) fn check<'tcx>(
@@ -28,25 +26,23 @@ pub(super) fn check<'tcx>(
     println!("transmute caller:{}", cur_fn_name);
 
     // whether has size or alignment issues
-    let unsound = if let Ok(from) = cx.tcx.try_normalize_erasing_regions(cx.param_env, from_ty)
-        && let Ok(to) = cx.tcx.try_normalize_erasing_regions(cx.param_env, to_ty)
-        && let Ok(from_layout) = cx.tcx.layout_of(cx.param_env.and(from_ty))
-        && let Ok(to_layout) = cx.tcx.layout_of(cx.param_env.and(to_ty))
-    {
-        // if no any pointer type involved in transmute, then there are no any size or alignment issues
-        if !(src_type.contains("&") || dst_type.contains("&") || src_type.contains("*") || dst_type.contains("*")) {
-            String::from("safe")
-        } else if !(from_layout.align.abi < to_layout.align.abi) {
-            String::from("warn(align)")
-        } else if !(from_layout.size < to_layout.size) {
-            String::from("warn(size)")
+    // if no any pointer type involved in transmute, then there are no any size or alignment issues
+    let unsound = if !(src_type.contains("&") || dst_type.contains("&") || src_type.contains("*") || dst_type.contains("*")) {
+        String::from("safe")
+    } else {
+        let src_type_align = get_ty_align(cx, from_ty);
+        let dst_type_align = get_ty_align(cx, to_ty);
+        let src_type_size = get_ty_size(cx, from_ty);
+        let dst_type_size = get_ty_size(cx, to_ty);
+        if src_type_align < dst_type_align {
+            format!("warn(align{}>{})", src_type_align, dst_type_align)
+        } else if src_type_size < dst_type_size {
+            format!("warn(size{}>{})", src_type_size, dst_type_size)
+        } else if check_adt(&src_type) || check_adt(&dst_type) {
+            String::from("warn(adt)")
         } else {
             String::from("safe")
         }
-
-    } else {
-        // no idea about layout, so don't lint
-        String::from("no idea")
     };
     println!("transmute:({}>{}>{})", src_type, dst_type, unsound);
     span_lint(
@@ -134,4 +130,68 @@ fn get_ty<'tcx>(cx: &LateContext<'tcx>, matched_ty: Ty<'tcx>) -> String {
         ty::Error(_) => String::from("err"),
     };
     matched_type
+}
+
+fn get_ty_align<'tcx>(cx: &LateContext<'tcx>, matched_ty: Ty<'tcx>) -> u64 {
+    let unsound = match &matched_ty.kind() {
+        ty::RawPtr(ptr_ty) => {
+            if let Ok(ty_layout) = cx.layout_of(ptr_ty.ty) {
+                ty_layout.align.abi.bytes()
+            } else {
+                0
+            }
+        },
+        ty::Ref(_, ref_ty, _) => {
+            if let Ok(ty_layout) = cx.layout_of(*ref_ty) {
+                ty_layout.align.abi.bytes()
+            } else {
+                0
+            }
+        },
+        _ => {
+            if let Ok(ty_layout) = cx.layout_of(matched_ty) {
+                ty_layout.align.abi.bytes()
+            } else {
+                0
+            }
+        },
+    };
+    unsound
+}
+
+fn get_ty_size<'tcx>(cx: &LateContext<'tcx>, matched_ty: Ty<'tcx>) -> u64 {
+    let unsound = match &matched_ty.kind() {
+        ty::RawPtr(ptr_ty) => {
+            if let Ok(ty_layout) = cx.layout_of(ptr_ty.ty) {
+                ty_layout.size.bytes()
+            } else {
+                0
+            }
+        },
+        ty::Ref(_, ref_ty, _) => {
+            if let Ok(ty_layout) = cx.layout_of(*ref_ty) {
+                ty_layout.size.bytes()
+            } else {
+                0
+            }
+        },
+        _ => {
+            if let Ok(ty_layout) = cx.layout_of(matched_ty) {
+                ty_layout.size.bytes()
+            } else {
+                0
+            }
+        },
+    };
+    unsound
+}
+
+fn check_adt(ty_str: &String) -> bool {
+    if ty_str.contains("struct") || ty_str.contains("union") || 
+        ty_str.contains("enum") || ty_str.contains("adt") || 
+        ty_str.contains("trait obj") || ty_str.contains("tuple") {
+            true
+    } else {
+        false
+    }
 }

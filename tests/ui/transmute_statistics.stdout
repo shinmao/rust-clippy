@@ -1,12 +1,12 @@
 transmute caller:sa_to_sb
-transmute:(&struct>&struct>warn(align))
+transmute:(&struct>&struct>warn(adt))
 transmute caller:from
 transmute:(struct>struct>safe)
 transmute caller:main
-transmute:(*const uint>&uint>warn(align))
+transmute:(*const uint>&uint>safe)
 transmute caller:main
-transmute:(*const uint>&uint>warn(align))
+transmute:(*const uint>&uint>safe)
 transmute caller:main
-transmute:(&uint>&uint>warn(align))
+transmute:(&uint>&uint>warn(align1>4))
 transmute caller:main
-transmute:(&uint>&uint>warn(align))
+transmute:(&uint>&uint>safe)
