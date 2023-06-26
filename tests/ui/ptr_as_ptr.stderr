@@ -56,17 +56,23 @@ error: Here is cast(main>struct>struct=>mut_to_mut>warn(adt))!
 LL |     let mut_sb_ref = unsafe { &*(mut_sa_ptr as *mut B) };
    |                                 ^^^^^^^^^^^^^^^^^^^^^^
 
+error: Here is cast(main>uint>uint=>safe>warn(align1>4))!
+  --> $DIR/ptr_as_ptr.rs:61:17
+   |
+LL |     let y_ptr = x_ptr as *const u32;
+   |                 ^^^^^^^^^^^^^^^^^^^
+
 error: Here is cast(_msrv_1_38>uint>int=>safe>safe)!
-  --> $DIR/ptr_as_ptr.rs:75:13
+  --> $DIR/ptr_as_ptr.rs:80:13
    |
 LL |     let _ = ptr as *const i32;
    |             ^^^^^^^^^^^^^^^^^
 
 error: Here is cast(_msrv_1_38>uint>int=>mut_to_mut>safe)!
-  --> $DIR/ptr_as_ptr.rs:76:13
+  --> $DIR/ptr_as_ptr.rs:81:13
    |
 LL |     let _ = mut_ptr as *mut i32;
    |             ^^^^^^^^^^^^^^^^^^^
 
-error: aborting due to 11 previous errors
+error: aborting due to 12 previous errors
 

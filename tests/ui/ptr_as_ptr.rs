@@ -55,6 +55,11 @@ fn main() {
     let sa_ptr: *const A = &sa;
     let mut_sa_ptr= sa_ptr as *mut A;
     let mut_sb_ref = unsafe { &*(mut_sa_ptr as *mut B) };
+
+    let x: u8 = 10;
+    let x_ptr: *const u8 = &x;
+    let y_ptr = x_ptr as *const u32;
+    let y_ref = unsafe { &*y_ptr };
 }
 
 #[clippy::msrv = "1.37"]

@@ -4,6 +4,7 @@ use if_chain::if_chain;
 use rustc_hir::{Expr, ExprKind, Mutability, hir_id::HirId};
 use rustc_lint::LateContext;
 use rustc_middle::ty::{self, TypeAndMut, Ty};
+use rustc_middle::ty::layout::LayoutOf;
 use rustc_span::symbol::sym;
 
 use super::PTR_AS_PTR;
@@ -33,10 +34,8 @@ pub(super) fn check(cx: &LateContext<'_>, expr: &Expr<'_>, msrv: &Msrv) {
             let cur_fn_name = cx.tcx.hir().name(owner_id).to_ident_string();
             println!("casting caller:{}", cur_fn_name);
 
-            let align_res = if let Ok(from) = cx.tcx.try_normalize_erasing_regions(cx.param_env, cast_from)
-                && let Ok(to) = cx.tcx.try_normalize_erasing_regions(cx.param_env, cast_to)
-                && let Ok(from_layout) = cx.tcx.layout_of(cx.param_env.and(cast_from))
-                && let Ok(to_layout) = cx.tcx.layout_of(cx.param_env.and(cast_to))
+            let align_res = if let Ok(from_layout) = cx.layout_of(*from_pointer_ty)
+                && let Ok(to_layout) = cx.layout_of(*to_pointee_ty)
             {
                 if from_layout.align.abi.bytes() < to_layout.align.abi.bytes() {
                     format!("warn(align{}>{})", from_layout.align.abi.bytes(), to_layout.align.abi.bytes())
@@ -163,9 +162,9 @@ fn get_ty<'tcx>(cx: &LateContext<'tcx>, matched_ty: Ty<'tcx>) -> String {
 }
 
 fn check_adt(ty_str: &String) -> bool {
-    if (ty_str.contains("struct") || ty_str.contains("union") || 
+    if ty_str.contains("struct") || ty_str.contains("union") || 
         ty_str.contains("enum") || ty_str.contains("adt") || 
-        ty_str.contains("trait obj") || ty_str.contains("tuple")) {
+        ty_str.contains("trait obj") || ty_str.contains("tuple") {
             true
     } else {
         false
